@@ -1,51 +1,50 @@
 -- Thanks Sheepolution! https://www.sheepolution.com/learn/book/contents
-require('helpers')
-
-local Rectangles = {}
-local Fruits = {}
+local theRectangles = {}
+local fruits = {}
 
 function love.load()
-  Fruits = {"melon", "orange", "lychee"}
-  table.insert(Fruits, "passion fruit")
+  Tick = require 'tick'
+  Rectangle = require 'rectangle'
+
+  fruits = {"melon", "orange", "lychee"}
+  table.insert(fruits, "passion fruit")
   -- Removing item from a table shifts all following members up one
-  table.remove(Fruits, 1)
+  table.remove(fruits, 1)
 
   -- how to unpack this into width and height of window? below doesn't work
   -- height, width = table.unpack(love.graphics.getDimensions())
+  --
+  ShowCircle = false
+  Tick.recur(function() ShowCircle = not ShowCircle end, 1)
 end
 
 function love.keypressed(key)
   if key == 'space' then
-    local rect = CreateRectangle()
-    table.insert(Rectangles, rect)
+    local rect = Rectangle.RandomRectangle()
+    table.insert(theRectangles, rect)
   end
 end
 
 function love.update(dt)
-  for _,rect in ipairs(Rectangles) do
-    -- Delta time is the time between screen updates. Multiply magnitude by delta time
-    -- to ensure consistency across machines
-    if love.keyboard.isDown('right') then
-      rect.x = (rect.x + rect.speed * dt) % 800
-    elseif love.keyboard.isDown('left') then
-      rect.x = (rect.x - rect.speed * dt) % 800
-    end
+  Tick.update(dt)
 
-    if love.keyboard.isDown('up') then
-      rect.y = (rect.y - rect.speed * dt) % 600
-    elseif love.keyboard.isDown('down') then
-      rect.y = (rect.y + rect.speed * dt) % 600
-    end
+  for _,rect in ipairs(theRectangles) do
+    -- REMEMBER need to call methods with : so that self is passed
+    rect:update(dt)
   end
 end
 
 function love.draw()
-  for _,rect in ipairs(Rectangles) do
-    love.graphics.rectangle("fill", rect.x, rect.y, rect.width, rect.height)
+  if ShowCircle then
+    love.graphics.circle('line', 400, 300, 200)
   end
 
-  -- for i=1,#Fruits do
-  for i,f in ipairs(Fruits) do
+  for _,rect in ipairs(theRectangles) do
+    rect:draw()
+  end
+
+  -- for i=1,#fruits do
+  for i,f in ipairs(fruits) do
     love.graphics.print(f, 100, i*100)
   end
 end
