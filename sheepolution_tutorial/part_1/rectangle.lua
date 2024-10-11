@@ -1,6 +1,25 @@
 local object = require 'classic'
 local types = {}
 
+function types.checkCollision(a, b)
+  -- This is called AABB collision (Axis-Aligned Bounding Box)
+  local aTop = a.y
+  local aBottom = a.y + a.height
+  local aLeft = a.x
+  local aRight = a.x + a.width
+
+  local bTop = b.y
+  local bBottom = b.y + b.height
+  local bLeft = b.x
+  local bRight = b.x + b.width
+
+  return aLeft <= bRight
+      and aRight >= bLeft
+      -- NOTE origin is **top** left, so this looks back to front
+      and aTop <= bBottom
+      and aBottom >= bTop
+end
+
 -- Rectangle
 types.Rectangle = object:extend()
 
@@ -29,8 +48,6 @@ function types.Rectangle:update(dt)
 end
 
 function types.Rectangle:draw()
-  print('draw method')
-  print(self.width)
   love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 end
 
