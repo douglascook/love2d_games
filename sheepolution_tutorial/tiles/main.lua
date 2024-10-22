@@ -3,10 +3,13 @@ function love.load()
   -- https://www.love2d.org/forums/viewtopic.php?t=80687
   love.graphics.setDefaultFilter("nearest")
 
+  SEED = os.time()
+  math.randomseed(SEED)
+
   Tiles = require 'tiles'
   Board = require 'board'
 
-  TheBoard = Board(170, 150)
+  TheBoard = Board(20, 10, 50, 100)
   Player = Tiles.selectQuad(24, 1)
   PlayerX = 2
   PlayerY = 2
@@ -37,6 +40,8 @@ function love.keypressed(key)
 end
 
 function love.draw()
+  love.graphics.print("Seed = " .. SEED, 0, 0)
+
   TheBoard:drawMap()
   TheBoard:drawTile(PlayerX, PlayerY, Player)
 end
