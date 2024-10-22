@@ -1,4 +1,8 @@
 function love.load()
+  -- Change filter used for scaling to avoid blurry pixel art
+  -- https://www.love2d.org/forums/viewtopic.php?t=80687
+  love.graphics.setDefaultFilter("nearest")
+
   Tiles = require 'tiles'
   Board = require 'board'
 
