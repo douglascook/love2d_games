@@ -58,10 +58,17 @@ function Board:drawMap()
   end
 end
 
-function Board:drawTile(x, y, quad)
+function Board:drawTile(x, y, tile, colour)
+  if colour ~= nil then
+    love.graphics.setColor(colour)
+  end
+
   x = self.x_offset + (x * self.scaling * Tiles.tile_size)
   y = self.y_offset + (y * self.scaling * Tiles.tile_size)
-  love.graphics.draw(Tiles.sheet, quad, x, y, 0, self.scaling, self.scaling)
+  love.graphics.draw(Tiles.sheet, Tiles.types[tile], x, y, 0, self.scaling, self.scaling)
+
+  -- Reset
+  love.graphics.setColor({ 1, 1, 1 })
 end
 
 function Board:isOccupied(x, y)
