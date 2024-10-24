@@ -19,9 +19,14 @@ local types = {
   croc = selectQuad(29, 8),
 }
 
+local function getRandomMonster()
+  local monsters = { "bat", "slime", "serpent", "croc" }
+  return monsters[math.random(1, 4)]
+end
+
 return {
   sheet = sheet,
   types = types,
   tile_size = tile_size,
-  selectQuad = selectQuad
+  getRandomMonster = getRandomMonster
 }

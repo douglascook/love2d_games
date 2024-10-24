@@ -23,12 +23,13 @@ function love.update(dt)
 end
 
 function love.keypressed(key)
+  for _ = 0, math.random(0, 3) do
+    TheBoard:addMonster()
+  end
   TheBoard:updatePlayer(key)
 end
 
 function love.draw()
   love.graphics.print("Seed = " .. SEED, 0, 0)
-
-  TheBoard:drawMap()
-  TheBoard:drawPlayer()
+  TheBoard:draw()
 end

@@ -1,17 +1,22 @@
 Object = require 'classic'
 Tiles = require 'tiles'
+Monster = require 'monster'
 
 local Board = Object:extend()
 
 function Board:new(args)
+  self.width = args.width
+  self.height = args.height
   self.x_offset = args.x_offset
   self.y_offset = args.y_offset
   self.scaling = 2
 
   self.map = self:generateMap(args.width, args.height)
+
   self.player = args.player
   self.player_x = args.player_x
   self.player_y = args.player_y
+  self.monsters = {}
 end
 
 function Board:generateMap(width, height)
@@ -50,6 +55,12 @@ function Board:generateMap(width, height)
   return map
 end
 
+function Board:draw()
+  self:drawMap()
+  self:drawPlayer()
+  self:drawMonsters()
+end
+
 function Board:drawMap()
   for i, row in ipairs(self.map) do
     for j, tile in ipairs(row) do
@@ -86,6 +97,24 @@ function Board:updatePlayer(key)
   end
 end
 
+function Board:addMonster()
+  local x = 1
+  local y = 1
+  while self:isOccupied(x, y) do
+    x = math.random(2, self.width - 1)
+    y = math.random(2, self.height - 1)
+  end
+
+  local monster = Monster(x, y)
+  table.insert(self.monsters, monster)
+end
+
+function Board:drawMonsters()
+  for _, m in ipairs(self.monsters) do
+    self:drawTile(m.x, m.y, m.tile, m.colour)
+  end
+end
+
 function Board:drawTile(x, y, tile, colour)
   if colour ~= nil then
     love.graphics.setColor(colour)
@@ -100,7 +129,24 @@ function Board:drawTile(x, y, tile, colour)
 end
 
 function Board:isOccupied(x, y)
-  return self.map[y][x] ~= "empty"
+  -- Tile is a wall
+  if self.map[y][x] ~= "empty" then
+    return true
+    -- Player is on the tile
+  elseif x == self.player_x and y == self.player_y then
+    return true
+  else
+    -- Monster is on the tile
+    for _, m in ipairs(self.monsters) do
+      print(x, m.x)
+      print(y, m.y)
+      if x == m.x and y == m.y then
+        return true
+      end
+    end
+  end
+
+  return false
 end
 
 return Board
