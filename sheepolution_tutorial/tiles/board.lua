@@ -18,9 +18,9 @@ function Board:generateMap(width, height)
   for i = 1, height do
     local row = {}
     for j = 1, width do
-      local tile = 0
+      local tile = "empty"
       if i == 1 or i == height or j == 1 or j == width then
-        tile = 1
+        tile = "tree1"
       end
       table.insert(row, tile)
     end
@@ -28,7 +28,8 @@ function Board:generateMap(width, height)
   end
 
   -- Fill in some walls
-  for _ = 1, math.random(6, height * width / 6) do
+  local area = height * width
+  for _ = 1, math.random(area / 10, area / 6) do
     -- Player starts at 2,2 so don't draw any walls there
     -- REMEMBER indexes are 1 based!
     local row = 2
@@ -38,7 +39,9 @@ function Board:generateMap(width, height)
       col = math.random(2, width - 1)
     end
 
-    map[row][col] = math.random(2, 3)
+    -- Can't index directly into a table literal. See https://stackoverflow.com/q/19331262
+    local trees = { "tree2", "tree3" }
+    map[row][col] = trees[math.random(1, 2)]
   end
 
   return map
@@ -47,9 +50,9 @@ end
 function Board:drawMap()
   for i, row in ipairs(self.map) do
     for j, tile in ipairs(row) do
-      if tile ~= 0 then
+      if tile ~= "empty" then
         -- Lua arrays are 1-based(!!)
-        self:drawTile(j, i, Tiles.types[tile])
+        self:drawTile(j, i, tile)
       end
     end
   end
@@ -62,7 +65,7 @@ function Board:drawTile(x, y, quad)
 end
 
 function Board:isOccupied(x, y)
-  return self.map[y][x] ~= 0
+  return self.map[y][x] ~= "empty"
 end
 
 return Board

@@ -10,7 +10,7 @@ function love.load()
   Board = require 'board'
 
   TheBoard = Board(20, 10, 50, 100)
-  Player = Tiles.selectQuad(24, 1)
+  PLAYER = "wizard"
   PlayerX = 2
   PlayerY = 2
 end
@@ -43,5 +43,5 @@ function love.draw()
   love.graphics.print("Seed = " .. SEED, 0, 0)
 
   TheBoard:drawMap()
-  TheBoard:drawTile(PlayerX, PlayerY, Player)
+  TheBoard:drawTile(PlayerX, PlayerY, PLAYER)
 end

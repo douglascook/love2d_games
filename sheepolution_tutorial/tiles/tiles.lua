@@ -5,10 +5,18 @@ local function selectQuad(x, y)
   return love.graphics.newQuad(x * (tile_size + 1), y * (tile_size + 1), tile_size, tile_size, sheet)
 end
 
+-- NOTE these are 0-based
 local types = {
-  selectQuad(0, 1),
-  selectQuad(1, 1),
-  selectQuad(2, 1),
+  tree1 = selectQuad(0, 1),
+  tree2 = selectQuad(1, 1),
+  tree3 = selectQuad(2, 1),
+
+  wizard = selectQuad(24, 1),
+
+  bat = selectQuad(26, 8),
+  slime = selectQuad(27, 8),
+  serpent = selectQuad(28, 8),
+  croc = selectQuad(29, 8),
 }
 
 return {
