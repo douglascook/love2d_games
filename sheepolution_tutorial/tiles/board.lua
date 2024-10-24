@@ -3,12 +3,15 @@ Tiles = require 'tiles'
 
 local Board = Object:extend()
 
-function Board:new(width, height, x_offset, y_offset)
-  self.x_offset = x_offset
-  self.y_offset = y_offset
+function Board:new(args)
+  self.x_offset = args.x_offset
+  self.y_offset = args.y_offset
   self.scaling = 2
 
-  self.map = self:generateMap(width, height)
+  self.map = self:generateMap(args.width, args.height)
+  self.player = args.player
+  self.player_x = args.player_x
+  self.player_y = args.player_y
 end
 
 function Board:generateMap(width, height)
@@ -55,6 +58,31 @@ function Board:drawMap()
         self:drawTile(j, i, tile)
       end
     end
+  end
+end
+
+function Board:drawPlayer()
+  self:drawTile(self.player_x, self.player_y, self.player)
+end
+
+function Board:updatePlayer(key)
+  local x = self.player_x
+  local y = self.player_y
+
+  if key == "right" then
+    x = x + 1
+  elseif key == "left" then
+    x = x - 1
+  elseif key == "down" then
+    y = y + 1
+  elseif key == "up" then
+    y = y - 1
+  end
+
+  -- Only move if destination tile is unoccupied
+  if not self:isOccupied(x, y) then
+    self.player_x = x
+    self.player_y = y
   end
 end
 
