@@ -23,8 +23,12 @@ function love.update(dt)
 end
 
 function love.keypressed(key)
-  for _ = 0, math.random(0, 3) do
-    TheBoard:addMonster()
+  if key == 'up' or key == 'down' or key == 'left' or key == 'right' then
+    for _ = 0, math.random(0, 3) do
+      if not TheBoard:isFull() then
+        TheBoard:addMonster()
+      end
+    end
   end
   TheBoard:updatePlayer(key)
 end

@@ -7,20 +7,24 @@ local Board = Object:extend()
 function Board:new(args)
   self.width = args.width
   self.height = args.height
+  self.area = args.width * args.height
   self.x_offset = args.x_offset
   self.y_offset = args.y_offset
   self.scaling = 2
 
-  self.map = self:generateMap(args.width, args.height)
+  self.map, self.wall_count = self:generateMap(args.width, args.height)
 
   self.player = args.player
   self.player_x = args.player_x
   self.player_y = args.player_y
+
   self.monsters = {}
 end
 
 function Board:generateMap(width, height)
   local map = {}
+  -- External walls
+  local wall_count = 2 * (width + height) - 4
 
   -- Empty map with border
   for i = 1, height do
@@ -36,8 +40,10 @@ function Board:generateMap(width, height)
   end
 
   -- Fill in some walls
-  local area = height * width
-  for _ = 1, math.random(area / 10, area / 6) do
+  local internal_wall_count = math.floor(math.random(self.area / 10, self.area / 6))
+  wall_count = wall_count + internal_wall_count
+
+  for _ = 1, internal_wall_count do
     -- Player starts at 2,2 so don't draw any walls there
     -- REMEMBER indexes are 1 based!
     local row = 2
@@ -52,7 +58,7 @@ function Board:generateMap(width, height)
     map[row][col] = trees[math.random(1, 2)]
   end
 
-  return map
+  return map, wall_count
 end
 
 function Board:draw()
@@ -138,8 +144,6 @@ function Board:isOccupied(x, y)
   else
     -- Monster is on the tile
     for _, m in ipairs(self.monsters) do
-      print(x, m.x)
-      print(y, m.y)
       if x == m.x and y == m.y then
         return true
       end
@@ -147,6 +151,12 @@ function Board:isOccupied(x, y)
   end
 
   return false
+end
+
+-- FIXME this isn't working for the final batch, returns true before really full
+function Board:isFull()
+  -- Walls, plus monsters, plus player
+  return self.wall_count + #self.monsters + 1 == self.area
 end
 
 return Board
