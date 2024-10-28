@@ -1,6 +1,6 @@
-Object = require 'classic'
-Tiles = require 'tiles'
-Monster = require 'monster'
+local Object = require 'classic'
+local Tiles = require 'tiles'
+local Monster = require 'monster'
 
 local Board = Object:extend()
 
@@ -17,6 +17,7 @@ function Board:new(args)
   self.player = args.player
   self.player_x = args.player_x
   self.player_y = args.player_y
+  self.player_direction = "right"
 
   self.monsters = {}
 end
@@ -94,7 +95,11 @@ function Board:updatePlayer(key)
     y = y + 1
   elseif key == "up" then
     y = y - 1
+  else
+    -- Should be guarded against in main love.keypressed
+    error("Unexpected key")
   end
+  self.player_direction = key
 
   -- Only move if destination tile is unoccupied
   if not self:isOccupied(x, y) then
@@ -126,12 +131,17 @@ function Board:drawTile(x, y, tile, colour)
     love.graphics.setColor(colour)
   end
 
-  x = self.x_offset + (x * self.scaling * Tiles.tile_size)
-  y = self.y_offset + (y * self.scaling * Tiles.tile_size)
+  x, y = self:pixelCoordFromGrid(x, y)
   love.graphics.draw(Tiles.sheet, Tiles.types[tile], x, y, 0, self.scaling, self.scaling)
 
   -- Reset
   love.graphics.setColor({ 1, 1, 1 })
+end
+
+function Board:pixelCoordFromGrid(x, y)
+  local x_pixel = self.x_offset + (x * self.scaling * Tiles.tile_size)
+  local y_pixel = self.y_offset + (y * self.scaling * Tiles.tile_size)
+  return x_pixel, y_pixel
 end
 
 function Board:isOccupied(x, y)

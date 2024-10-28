@@ -1,5 +1,5 @@
-require 'classic'
-Tiles = require 'tiles'
+local Object = require 'classic'
+local Tiles = require 'tiles'
 
 Monster = Object:extend()
 

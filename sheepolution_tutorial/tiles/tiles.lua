@@ -12,6 +12,7 @@ local types = {
   tree3 = selectQuad(2, 1),
 
   wizard = selectQuad(24, 1),
+  fire = selectQuad(15, 10),
 
   bat = selectQuad(26, 8),
   slime = selectQuad(27, 8),
