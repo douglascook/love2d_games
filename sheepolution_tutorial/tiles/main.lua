@@ -4,7 +4,7 @@ function love.load()
   love.graphics.setDefaultFilter("nearest")
 
   -- Filter needs to be changed BEFORE importing board - why?
-  Board = require "board"
+  local Board_ = require "board"
   Fireball = require "fireball"
 
   WindowHeight = love.graphics.getHeight()
@@ -13,7 +13,7 @@ function love.load()
   SEED = os.time()
   math.randomseed(SEED)
 
-  TheBoard = Board({
+  Board = Board_({
     width = 20,
     height = 10,
     x_offset = 50,
@@ -30,7 +30,19 @@ function love.update(dt)
   for i, f in ipairs(Fireballs) do
     f:update(dt)
 
-    if f:isOOB() then
+    local x, y = Board:gridCoordFromPixel(f.x, f.y)
+    local tile = Board.map[y][x]
+
+    -- If a monster is hit by a fireball then destroy it.
+    for j, m in ipairs(Board.monsters) do
+      if x == m.x and y == m.y then
+        table.remove(Board.monsters, j)
+        break
+      end
+    end
+
+    -- Stop at wall, or off screen.
+    if string.sub(tile, 0, 4) == "tree" or f:isOOB() then
       table.remove(Fireballs, i)
     end
   end
@@ -39,17 +51,17 @@ end
 function love.keypressed(key)
   if key == "up" or key == "down" or key == "left" or key == "right" then
     for _ = 0, math.random(0, 3) do
-      if not TheBoard:isFull() then
-        TheBoard:addMonster()
+      if not Board:isFull() then
+        Board:addMonster()
       end
     end
 
-    TheBoard:updatePlayer(key)
+    Board:updatePlayer(key)
   end
 
   if key == "space" then
-    local x, y = TheBoard:pixelCoordFromGrid(TheBoard.player_x, TheBoard.player_y)
-    local fireball = Fireball(x, y, TheBoard.player_direction)
+    local x, y = Board:pixelCoordFromGrid(Board.player_x, Board.player_y)
+    local fireball = Fireball(x, y, Board.player_direction)
     table.insert(Fireballs, fireball)
   end
 end
@@ -57,9 +69,9 @@ end
 function love.draw()
   love.graphics.print("Seed = " .. SEED, 0, 0)
   love.graphics.print("Fireballs = " .. #Fireballs, 0, 20)
-  TheBoard:draw()
+  Board:draw()
 
   for _, f in ipairs(Fireballs) do
-    f:draw(TheBoard.scaling)
+    f:draw(Board.scaling)
   end
 end

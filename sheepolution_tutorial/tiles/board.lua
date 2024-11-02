@@ -144,6 +144,12 @@ function Board:pixelCoordFromGrid(x, y)
   return x_pixel, y_pixel
 end
 
+function Board:gridCoordFromPixel(x, y)
+  local x_board = (x - self.x_offset) / (self.scaling * Tiles.tile_size)
+  local y_board = (y - self.y_offset) / (self.scaling * Tiles.tile_size)
+  return math.floor(x_board), math.floor(y_board)
+end
+
 function Board:isOccupied(x, y)
   -- Tile is a wall
   if self.map[y][x] ~= "empty" then
